@@ -1,0 +1,99 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>WebVR - Aframe - VR walkthrough</title>
+    <meta name="description" content="WebVR - Aframe - VR walkthrough">
+    <meta name="author" content="Kumar Ahir - VR Designer">
+    <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-animation-component@^4.1.2/dist/aframe-animation-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-look-at-component@0.5.1/dist/aframe-look-at-component.min.js"></script>
+    <script>
+      AFRAME.registerComponent('hotspots',{
+        init:function(){
+            this.el.addEventListener('reloadspots',function(evt){
+            
+            //get the entire current spot group and scale it to 0
+            var currspotgroup=document.getElementById(evt.detail.currspots);
+            currspotgroup.setAttribute("scale","0 0 0");
+            
+            //get the entire new spot group and scale it to 1
+            var newspotgroup=document.getElementById(evt.detail.newspots);
+            newspotgroup.setAttribute("scale","1 1 1");
+          });
+        }
+      });
+      AFRAME.registerComponent('spot',{
+        schema:{
+          linkto:{type:"string",default:""},
+          spotgroup:{type:"string",default:""}
+        },
+        init:function(){
+          
+          //add image source of hotspot icon
+          this.el.setAttribute("src","#hotspot");
+          //make the icon look at the camera all the time
+          this.el.setAttribute("look-at","#cam");
+          
+          var data=this.data;
+          
+          this.el.addEventListener('click',function(){
+            //set the skybox source to the new image as per the spot
+            var sky=document.getElementById("skybox");
+            sky.setAttribute("src",data.linkto);
+            
+            var spotcomp=document.getElementById("spots");
+            var currspots=this.parentElement.getAttribute("id");
+            //create event for spots component to change the spots data
+            spotcomp.emit('reloadspots',{newspots:data.spotgroup,currspots:currspots});
+          });
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <a-scene background="color: #ECECEC">
+      <a-assets>
+       <img id="point1" src="IMG_9536.JPG"/> 
+        <img id="point2" src="kopijaya.JPG"/> 
+
+        
+        <img id="hotspot" src="icons8-next-page-48.png"/>
+
+        <a-asset-item id="coffeeCup" src="coffee_cup/scene.gltf" ></a-asset-item>
+        <a-asset-item id="bird" src="bird_orange/scene.gltf" ></a-asset-item>
+        <a-asset-item id="lamp" src="street_lamp/scene.gltf" ></a-asset-item>
+        
+      </a-assets>
+      
+      <a-entity id="spots" hotspots>
+        <a-entity id="group-point1">
+            <a-image id="picture" src="qupeeMenu.png" position="0 1.5 -3" width="3" height="2"></a-image>
+            <a-text value="Qoupee" position="-0.3 0.2 -3" width="4" color="white"></a-text>
+            <a-entity gltf-model="#coffeeCup" position="20 -1.5 -17" rotation="0 0 0"></a-entity>
+            <a-entity gltf-model="#coffeeCup" position="20 -1.5 -25" rotation="0 0 0"></a-entity>
+            <a-image spot="linkto:#point2;spotgroup:group-point2" position="0 -2 -5" ></a-image>
+        </a-entity>
+        <a-entity id="group-point2" scale="0 0 0">
+            <a-image id="picture" src="menu.jpeg" position="0 1.5 -3" width="3" height="2"></a-image>
+            <a-entity gltf-model="#bird" position="10 -2 -8" rotation="0 -45 0"></a-entity>
+            <a-entity gltf-model="#lamp" position="-10 -5 -10" rotation="0 -90 0"></a-entity>
+            <a-text value="Kopi Jaya" position="-0.3.5 0.2 -3" width="3" color="white"></a-text>
+          <a-image spot="linkto:#point1;spotgroup:group-point1" position="0 -2 -5" ></a-image>
+        </a-entity>
+       
+      
+      <a-sky id="skybox" src="#point1" rotation="0 180 0"></a-sky>
+      
+
+      <a-entity id="cam" camera position="0 1.6 0" look-controls>
+        <a-entity cursor="fuse:true;fuseTimeout:2000"
+                  geometry="primitive:ring;radiusInner:0.01;radiusOuter:0.02"
+                  position="0 0 -1.8"
+                  material="shader:flat;color:#ff0000"
+                  animation__mouseenter="property:scale;to:3 3 3;startEvents:mouseenter;endEvents:mouseleave;dir:reverse;dur:2000;loop:1">
+        </a-entity>
+      </a-entity>
+      
+    </a-scene>
+  </body>
+    </html>
