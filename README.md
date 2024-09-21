@@ -44,4 +44,3 @@ Proses pembuatan aplikasi ini mencakup beberapa langkah:
 
 ---
 
-Sesuaikan nama, repo link, dan screenshot sesuai dengan kebutuhan aplikasi.
